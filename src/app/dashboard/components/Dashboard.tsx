@@ -20,7 +20,7 @@ const Dashboard: React.FC = () => {
     }
 
     if (!user) {
-        return null; // This will not be rendered as useEffect will redirect
+        return null;
     }
 
     return (
