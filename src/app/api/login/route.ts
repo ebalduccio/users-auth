@@ -1,37 +1,36 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
+import dbConnect from '@/lib/dbConnect';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
+export async function POST(req: Request) {
+  try {
+    await dbConnect();
 
-    try {
-        await dbConnect();
+    const { email, password } = await req.json();
 
-        const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
-        //user exist?
-        const user = await User.findOne({ email });
-        if (!user) return res.status(409).json({ message: 'Invalid Credentials' });
-
-        //check password
-        const checkedPassword = await bcrypt.compare(password, user.password);
-        if (!checkedPassword) return res.status(400).json({ message: 'invalid Credentials' });
-
-        //create and sign JWT token
-
-        const token = jwt.sign(
-            { userID: user._id },
-            process.env.JWT_SECRET!,
-            { expiresIn: '1h' }
-        );
-
-        res.status(200).json(token);
-    } catch (err) {
-        console.error('Login error', err);
-        res.status(500).json({ message: 'Internal Server Error' })
+    if (!user) {
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET!,
+      { expiresIn: '1h' }
+    );
+
+    return NextResponse.json({ token }, { status: 200 });
+  } catch (error) {
+    console.error('Login error:', error);
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  }
 }
