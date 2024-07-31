@@ -127,7 +127,7 @@ const Dashboard: React.FC = () => {
                                         <TableCell>
                                             <Dialog>
                                                 <DialogTrigger asChild>
-                                                    <Button variant="outline" className="mr-2" onClick={() => setEditingUser(user)}>Edit</Button>
+                                                    <Button variant="outline" className="mr-2  mb-2 md:mb-0" onClick={() => setEditingUser(user)}>Edit</Button>
                                                 </DialogTrigger>
                                                 <DialogContent>
                                                     <DialogHeader>
