@@ -7,6 +7,7 @@ import { Github, Linkedin } from 'lucide-react';
 const MainPage = () => {
     return (
         <div className="min-h-screen bg-radial-gradient flex flex-col items-center justify-center p-4">
+            <h1 className='mb-20 text-4xl font-bold text-white'>Users-auth-app</h1>
             <Card className="w-full max-w-md bg-white bg-opacity-90">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-center">Welcome to User Auth App</CardTitle>
