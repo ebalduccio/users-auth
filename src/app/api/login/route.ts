@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
     await dbConnect();
 

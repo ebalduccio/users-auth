@@ -1,7 +1,7 @@
-import dbConnect from "@/lib/dbConnect";
-import User from "@/models/User";
-import jwt from 'jsonwebtoken';
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import User from '@/models/User';
+import dbConnect from '@/lib/dbConnect';
+import jwt from 'jsonwebtoken'
 
 function verifyToken(token: string): boolean {
     try {
@@ -12,19 +12,25 @@ function verifyToken(token: string): boolean {
     }
 }
 
-export default async function GET(req: Request) {
+export async function GET(req: Request) {
     try {
-        const authHeader = req.headers.get('Authorization');
-        const token = authHeader && authHeader.split(' ')[1];
-        if (!token) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-        if (!verifyToken(token)) return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+        const token = req.headers.get('Authorization')?.split(' ')[1];
+        if (!token) {
+            return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+        }
+
+        const decoded = verifyToken(token);
+        if (!decoded) {
+            return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+        }
 
         await dbConnect();
 
         const users = await User.find({}, '-password');
+
         return NextResponse.json(users);
-    } catch (err) {
-        console.error('Error fetching users:', err);
+    } catch (error) {
+        console.error('Error fetching users:', error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
