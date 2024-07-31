@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 
 function verifyToken(token: string): boolean {
     try {
-        jwt.verify(token, process.env.JWT_SECRET!);
+        jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET!);
         return true;
     } catch (error) {
         return false;
